@@ -1,0 +1,57 @@
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres, { PostgresError } from 'postgres';
+import { config } from 'dotenv';
+
+// Ensure environment variables are loaded
+config();
+
+// ?????????????????
+if (!process.env.DATABASE_URL) {
+  console.error('DATABASE_URL environment variable is missing');
+  throw new Error('DATABASE_URL is required for database connection');
+}
+
+// ?????????????
+const connectionConfig = {
+  ssl: { rejectUnauthorized: false },
+  max: 10, // ????????
+  idle_timeout: 20, // ??????????????
+  connect_timeout: 10, // ??????????
+  prepare: false, // ?????????????????????
+};
+
+// ?????????
+let client: ReturnType<typeof postgres> | null = null;
+
+try {
+  console.log('Attempting to connect to database...');
+  console.log('Database URL:', process.env.DATABASE_URL);
+  client = postgres(process.env.DATABASE_URL, connectionConfig);
+  console.log('Database connection established successfully');
+} catch (error) {
+  console.error('Failed to connect to database:', error);
+  // ??????????????????????????
+  console.warn('Database connection failed, but server will continue to start');
+  client = null;
+}
+
+// ????????????
+export const db = drizzle(client);
+
+// ?????????????????????????
+export { client };
+
+// ???????D??
+export const checkDatabaseConnection = async (): Promise<boolean> => {
+  if (!client) {
+    console.warn('Database client is not initialized');
+    return false;
+  }
+  try {
+    await client`SELECT 1`;
+    return true;
+  } catch (error) {
+    console.error('Database health check failed:', error);
+    return false;
+  }
+};
