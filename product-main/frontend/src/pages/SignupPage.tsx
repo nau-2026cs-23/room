@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { Toaster } from '@/components/ui/sonner';
-import { BookOpen, Eye, EyeOff, CheckCircle } from 'lucide-react';
+import { BookOpen, Eye, EyeOff, CheckCircle, Shield } from 'lucide-react';
 
 export default function SignupPage() {
   const navigate = useNavigate();
@@ -15,12 +15,24 @@ export default function SignupPage() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
+  const [showConfirmPwd, setShowConfirmPwd] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string }>({});
+  const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string; confirmPassword?: string }>({});
+
+  const getPasswordStrength = (pwd: string): { strength: 'weak' | 'medium' | 'strong'; message: string } => {
+    if (pwd.length < 6) {
+      return { strength: 'weak', message: '密码强度：弱' };
+    } else if (pwd.length < 10 || !/[A-Z]/.test(pwd) || !/[0-9]/.test(pwd) || !/[^A-Za-z0-9]/.test(pwd)) {
+      return { strength: 'medium', message: '密码强度：中' };
+    } else {
+      return { strength: 'strong', message: '密码强度：强' };
+    }
+  };
 
   const validateForm = (): boolean => {
-    const newErrors: { username?: string; email?: string; password?: string } = {};
+    const newErrors: { username?: string; email?: string; password?: string; confirmPassword?: string } = {};
     
     if (!username) {
       newErrors.username = '请输入昵称';
@@ -38,6 +50,12 @@ export default function SignupPage() {
       newErrors.password = '请输入密码';
     } else if (password.length < 6) {
       newErrors.password = '密码至少需要6个字符';
+    }
+    
+    if (!confirmPassword) {
+      newErrors.confirmPassword = '请确认密码';
+    } else if (confirmPassword !== password) {
+      newErrors.confirmPassword = '两次输入的密码不一致';
     }
     
     setErrors(newErrors);
@@ -142,6 +160,9 @@ export default function SignupPage() {
                     if (errors.password) {
                       setErrors({ ...errors, password: undefined });
                     }
+                    if (errors.confirmPassword) {
+                      setErrors({ ...errors, confirmPassword: undefined });
+                    }
                   }}
                   required
                   minLength={6}
@@ -151,7 +172,45 @@ export default function SignupPage() {
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {password && (
+                <div className={`text-xs mt-1 ${getPasswordStrength(password).strength === 'weak' ? 'text-red-500' : getPasswordStrength(password).strength === 'medium' ? 'text-amber-500' : 'text-emerald-500'}`}>
+                  {getPasswordStrength(password).message}
+                </div>
+              )}
               {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword" className="text-[#1E293B] font-medium">确认密码</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type={showConfirmPwd ? 'text' : 'password'}
+                  placeholder="再次输入密码"
+                  value={confirmPassword}
+                  onChange={e => {
+                    setConfirmPassword(e.target.value);
+                    if (errors.confirmPassword) {
+                      setErrors({ ...errors, confirmPassword: undefined });
+                    }
+                  }}
+                  required
+                  minLength={6}
+                  className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] pr-10 ${errors.confirmPassword ? 'border-red-300 focus:border-red-400' : ''}`}
+                />
+                <button type="button" onClick={() => setShowConfirmPwd(!showConfirmPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#1E293B]">
+                  {showConfirmPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                </button>
+              </div>
+              {errors.confirmPassword && <p className="text-xs text-red-500 mt-1">{errors.confirmPassword}</p>}
+            </div>
+            <div className="flex items-center gap-2 text-sm text-[#64748B]">
+              <input type="checkbox" id="terms" required className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
+              <label htmlFor="terms" className="flex items-center gap-1">
+                我同意
+                <Link to="/terms" className="text-[#6366F1] hover:underline">用户协议</Link>
+                和
+                <Link to="/privacy" className="text-[#6366F1] hover:underline">隐私政策</Link>
+              </label>
             </div>
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold rounded-xl">
               {loading ? '注册中...' : '立即注册'}
@@ -161,6 +220,17 @@ export default function SignupPage() {
             已有账号？{' '}
             <Link to="/login" className="text-[#6366F1] font-medium hover:underline">登录</Link>
           </div>
+        </div>
+        <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="w-4 h-4 text-slate-600" />
+            <h3 className="text-sm font-semibold text-slate-700">账号安全提示</h3>
+          </div>
+          <ul className="text-xs text-slate-600 space-y-1">
+            <li>? 请使用强度较高的密码，包含字母、数字和特殊字符</li>
+            <li>? 不要与其他网站使用相同的密码</li>
+            <li>? 定期更换密码，保持账号安全</li>
+          </ul>
         </div>
       </div>
     </div>
