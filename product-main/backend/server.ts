@@ -9,13 +9,14 @@ import aiRoutes from './routes/ai';
 import teacherCertRoutes from './routes/teacherCert';
 import adminRoutes from './routes/admin';
 
-//import api routes here
-
 // Configuration
 import { SERVER_CONFIG } from './config/constants';
 
 // Middleware
 import { errorHandler } from './middleware/errorHandler';
+
+// Database
+import { initializeDatabase, closeDatabase } from './db';
 
 const app = express();
 
@@ -56,6 +57,7 @@ console.log('Environment variables loaded:', {
   JWT_SECRET: process.env.JWT_SECRET ? 'set' : 'not set',
   STRIPE_SECRET_KEY: process.env.STRIPE_SECRET_KEY ? 'set' : 'not set',
 });
+
 /**
  * Body Parser Middleware
  * Note: Stripe webhook requires raw body for signature verification
@@ -68,6 +70,7 @@ app.use((req, res, next) => {
   }
   return express.json()(req, res, next);
 });
+
 /**
  * API Routes
  */
@@ -77,6 +80,13 @@ app.use('/api/points', pointsRoutes);
 app.use('/api/ai', aiRoutes);
 app.use('/api/teacher-cert', teacherCertRoutes);
 app.use('/api/admin', adminRoutes);
+
+/**
+ * Health Check Route
+ */
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', timestamp: new Date().toISOString() });
+});
 
 /**
  * SPA Fallback Route
@@ -96,8 +106,30 @@ app.use(errorHandler as ErrorRequestHandler);
 /**
  * Start Server
  */
-app.listen(SERVER_CONFIG.PORT, () => {
+const server = app.listen(SERVER_CONFIG.PORT, () => {
   console.log(`Server ready on port ${SERVER_CONFIG.PORT}`);
+  console.log(`Health check: http://localhost:${SERVER_CONFIG.PORT}/health`);
+});
+
+/**
+ * Graceful Shutdown
+ */
+process.on('SIGINT', () => {
+  console.log('Shutting down server...');
+  closeDatabase();
+  server.close(() => {
+    console.log('Server stopped');
+    process.exit(0);
+  });
+});
+
+process.on('SIGTERM', () => {
+  console.log('Shutting down server...');
+  closeDatabase();
+  server.close(() => {
+    console.log('Server stopped');
+    process.exit(0);
+  });
 });
 
 export default app;

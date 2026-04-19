@@ -17,21 +17,53 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ username?: string; email?: string; password?: string }>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: { username?: string; email?: string; password?: string } = {};
+    
+    if (!username) {
+      newErrors.username = 'ÇëÊäÈëêÇ³Æ';
+    } else if (username.length < 2) {
+      newErrors.username = 'êÇ³ÆÖÁÉÙĞèÒª2¸ö×Ö·û';
+    }
+    
+    if (!email) {
+      newErrors.email = 'ÇëÊäÈëÓÊÏä';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'ÇëÊäÈëÓĞĞ§µÄÓÊÏäµØÖ·';
+    }
+    
+    if (!password) {
+      newErrors.password = 'ÇëÊäÈëÃÜÂë';
+    } else if (password.length < 6) {
+      newErrors.password = 'ÃÜÂëÖÁÉÙĞèÒª6¸ö×Ö·û';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     try {
       const res = await authApi.signup({ username, email, password });
       if (res.success) {
         login(res.data.token, res.data.user);
-        toast.success('æ³¨å†ŒæˆåŠŸ', { description: `æ¬¢è¿åŠ å…¥å­¦ç ”ç¤¾ï¼å·²è·å¾—50ç§¯åˆ†å¥–åŠ±` });
+        toast.success('×¢²á³É¹¦', { description: `»¶Ó­¼ÓÈëÑ§ÑĞÉç£¡ÒÑ»ñµÃ50»ı·Ö½±Àø` });
         navigate('/');
       } else {
-        toast.error('æ³¨å†Œå¤±è´¥', { description: res.message || 'è¯·æ£€æŸ¥è¾“å…¥ä¿¡æ¯' });
+        toast.error('×¢²áÊ§°Ü', { description: res.message || 'Çë¼ì²éÊäÈëĞÅÏ¢' });
       }
-    } catch {
-      toast.error('ç½‘ç»œé”™è¯¯', { description: 'è¯·æ£€æŸ¥ç½‘ç»œè¿æ¥' });
+    } catch (error) {
+      console.error('Signup error:', error);
+      toast.error('ÍøÂç´íÎó', { description: 'Çë¼ì²éÍøÂçÁ¬½Ó' });
     } finally {
       setLoading(false);
     }
@@ -48,12 +80,12 @@ export default function SignupPage() {
             </div>
             <span className="text-2xl font-bold text-[#0F172A]">&#23398;&#30740;&#31038;</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">åˆ›å»ºè´¦å·</h1>
-          <p className="text-[#64748B] text-sm">æ³¨å†Œå³è· 50 ç§¯åˆ†å¥–åŠ±ï¼Œå¼€å§‹ä½ çš„å­¦ä¹ ä¹‹æ—…</p>
+          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">´´½¨ÕËºÅ</h1>
+          <p className="text-[#64748B] text-sm">×¢²á¼´»ñ 50 »ı·Ö½±Àø£¬¿ªÊ¼ÄãµÄÑ§Ï°Ö®ÂÃ</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-sm">
           <div className="flex gap-3 mb-6 p-3 bg-emerald-50 rounded-xl">
-            {['æ³¨å†Œå¥–åŠ±50ç§¯åˆ†', 'æ¯æ—¥ç­¾åˆ°å¥–åŠ±', 'ä¸Šä¼ èµ„æ–™å¥–åŠ±'].map(t => (
+            {['×¢²á½±Àø50»ı·Ö', 'Ã¿ÈÕÇ©µ½½±Àø', 'ÉÏ´«×ÊÁÏ½±Àø'].map(t => (
               <div key={t} className="flex items-center gap-1 text-xs text-emerald-700">
                 <CheckCircle className="w-3 h-3" />
                 <span>{t}</span>
@@ -62,54 +94,72 @@ export default function SignupPage() {
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-[#1E293B] font-medium">æ˜µç§°</Label>
+              <Label htmlFor="username" className="text-[#1E293B] font-medium">êÇ³Æ</Label>
               <Input
                 id="username"
-                placeholder="è¾“å…¥æ‚¨çš„æ˜µç§°"
+                placeholder="ÊäÈëÄúµÄêÇ³Æ"
                 value={username}
-                onChange={e => setUsername(e.target.value)}
+                onChange={e => {
+                  setUsername(e.target.value);
+                  if (errors.username) {
+                    setErrors({ ...errors, username: undefined });
+                  }
+                }}
                 required
                 minLength={2}
-                className="h-11 border-[#E2E8F0] focus:border-[#6366F1]"
+                className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] ${errors.username ? 'border-red-300 focus:border-red-400' : ''}`}
               />
+              {errors.username && <p className="text-xs text-red-500 mt-1">{errors.username}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#1E293B] font-medium">é‚®ç®±</Label>
+              <Label htmlFor="email" className="text-[#1E293B] font-medium">ÓÊÏä</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="your@email.com"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors({ ...errors, email: undefined });
+                  }
+                }}
                 required
-                className="h-11 border-[#E2E8F0] focus:border-[#6366F1]"
+                className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] ${errors.email ? 'border-red-300 focus:border-red-400' : ''}`}
               />
+              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#1E293B] font-medium">å¯†ç </Label>
+              <Label htmlFor="password" className="text-[#1E293B] font-medium">ÃÜÂë</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPwd ? 'text' : 'password'}
-                  placeholder="è‡³å°‘6ä¸ªå­—ç¬¦"
+                  placeholder="ÖÁÉÙ6¸ö×Ö·û"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={e => {
+                    setPassword(e.target.value);
+                    if (errors.password) {
+                      setErrors({ ...errors, password: undefined });
+                    }
+                  }}
                   required
                   minLength={6}
-                  className="h-11 border-[#E2E8F0] focus:border-[#6366F1] pr-10"
+                  className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] pr-10 ${errors.password ? 'border-red-300 focus:border-red-400' : ''}`}
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#1E293B]">
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
             </div>
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold rounded-xl">
-              {loading ? 'æ³¨å†Œä¸­...' : 'ç«‹å³æ³¨å†Œ'}
+              {loading ? '×¢²áÖĞ...' : 'Á¢¼´×¢²á'}
             </Button>
           </form>
           <div className="mt-6 text-center text-sm text-[#64748B]">
-            å·²æœ‰è´¦å·ï¼Ÿ{' '}
-            <Link to="/login" className="text-[#6366F1] font-medium hover:underline">ç™»å½•</Link>
+            ÒÑÓĞÕËºÅ£¿{' '}
+            <Link to="/login" className="text-[#6366F1] font-medium hover:underline">µÇÂ¼</Link>
           </div>
         </div>
       </div>

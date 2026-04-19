@@ -30,8 +30,16 @@ async function apiFetch<T>(path: string, options: RequestInit = {}): Promise<Api
     ...(options.headers as Record<string, string> || {}),
   };
   if (token) headers['Authorization'] = `Bearer ${token}`;
-  const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
-  return res.json() as Promise<ApiResponse<T>>;
+  try {
+    const res = await fetch(`${API_BASE_URL}${path}`, { ...options, headers });
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`);
+    }
+    return res.json() as Promise<ApiResponse<T>>;
+  } catch (error) {
+    console.error('API fetch error:', error);
+    return { success: false, message: '����������Ժ�����' } as ApiResponse<T>;
+  }
 }
 
 // ─── Auth ─────────────────────────────────────────────────────────────────────

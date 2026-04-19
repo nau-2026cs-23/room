@@ -16,21 +16,45 @@ export default function LoginPage() {
   const [password, setPassword] = useState('');
   const [showPwd, setShowPwd] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState<{ email?: string; password?: string }>({});
+
+  const validateForm = (): boolean => {
+    const newErrors: { email?: string; password?: string } = {};
+    
+    if (!email) {
+      newErrors.email = 'ÇëÊäÈëÓÊÏä';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      newErrors.email = 'ÇëÊäÈëÓĞĞ§µÄÓÊÏäµØÖ·';
+    }
+    
+    if (!password) {
+      newErrors.password = 'ÇëÊäÈëÃÜÂë';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+    
     setLoading(true);
     try {
       const res = await authApi.login({ email, password });
       if (res.success) {
         login(res.data.token, res.data.user);
-        toast.success('ç™»å½•æˆåŠŸ', { description: `æ¬¢è¿å›æ¥ï¼Œ${res.data.user.username}` });
+        toast.success('µÇÂ¼³É¹¦', { description: `»¶Ó­»ØÀ´£¬${res.data.user.username}` });
         navigate('/');
       } else {
-        toast.error('ç™»å½•å¤±è´¥', { description: res.message || 'é‚®ç®±æˆ–å¯†ç é”™è¯¯' });
+        toast.error('µÇÂ¼Ê§°Ü', { description: res.message || 'ÓÊÏä»òÃÜÂë´íÎó' });
       }
-    } catch {
-      toast.error('ç½‘ç»œé”™è¯¯', { description: 'è¯·æ£€æŸ¥ç½‘ç»œè¿æ¥' });
+    } catch (error) {
+      console.error('Login error:', error);
+      toast.error('ÍøÂç´íÎó', { description: 'Çë¼ì²éÍøÂçÁ¬½Ó' });
     } finally {
       setLoading(false);
     }
@@ -47,51 +71,63 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold text-[#0F172A]">&#23398;&#30740;&#31038;</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">ç™»å½•è´¦å·</h1>
-          <p className="text-[#64748B] text-sm">ç™»å½•åå¯ä¸‹è½½èµ„æ–™ã€ä¸Šä¼ å†…å®¹ã€ä½¿ç”¨AIåŠ©æ‰‹</p>
+          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">µÇÂ¼ÕËºÅ</h1>
+          <p className="text-[#64748B] text-sm">µÇÂ¼ºó¿ÉÏÂÔØ×ÊÁÏ¡¢ÉÏ´«ÄÚÈİ¡¢Ê¹ÓÃAIÖúÊÖ</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#1E293B] font-medium">é‚®ç®±</Label>
+              <Label htmlFor="email" className="text-[#1E293B] font-medium">ÓÊÏä</Label>
               <Input
                 id="email"
                 type="email"
                 placeholder="your@email.com"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => {
+                  setEmail(e.target.value);
+                  if (errors.email) {
+                    setErrors({ ...errors, email: undefined });
+                  }
+                }}
                 required
-                className="h-11 border-[#E2E8F0] focus:border-[#6366F1]"
+                className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] ${errors.email ? 'border-red-300 focus:border-red-400' : ''}`}
               />
+              {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#1E293B] font-medium">å¯†ç </Label>
+              <Label htmlFor="password" className="text-[#1E293B] font-medium">ÃÜÂë</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPwd ? 'text' : 'password'}
-                  placeholder="è¾“å…¥å¯†ç "
+                  placeholder="ÊäÈëÃÜÂë"
                   value={password}
-                  onChange={e => setPassword(e.target.value)}
+                  onChange={e => {
+                    setPassword(e.target.value);
+                    if (errors.password) {
+                      setErrors({ ...errors, password: undefined });
+                    }
+                  }}
                   required
-                  className="h-11 border-[#E2E8F0] focus:border-[#6366F1] pr-10"
+                  className={`h-11 border-[#E2E8F0] focus:border-[#6366F1] pr-10 ${errors.password ? 'border-red-300 focus:border-red-400' : ''}`}
                 />
                 <button type="button" onClick={() => setShowPwd(!showPwd)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#1E293B]">
                   {showPwd ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
+              {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
             </div>
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold rounded-xl">
-              {loading ? 'ç™»å½•ä¸­...' : 'ç™»å½•'}
+              {loading ? 'µÇÂ¼ÖĞ...' : 'µÇÂ¼'}
             </Button>
           </form>
           <div className="mt-6 text-center text-sm text-[#64748B]">
-            è¿˜æ²¡æœ‰è´¦å·ï¼Ÿ{' '}
-            <Link to="/signup" className="text-[#6366F1] font-medium hover:underline">ç«‹å³æ³¨å†Œ</Link>
+            »¹Ã»ÓĞÕËºÅ£¿{' '}
+            <Link to="/signup" className="text-[#6366F1] font-medium hover:underline">Á¢¼´×¢²á</Link>
           </div>
         </div>
         <p className="text-center text-xs text-[#64748B] mt-6">
-          ç™»å½•å³è¡¨ç¤ºæ‚¨åŒæ„ã€Šç”¨æˆ·åè®®ã€‹åŠã€Šéšç§æ”¿ç­–ã€‹
+          µÇÂ¼¼´±íÊ¾ÄúÍ¬Òâ¡¶ÓÃ»§Ğ­Òé¡·¼°¡¶ÒşË½Õş²ß¡·
         </p>
       </div>
     </div>
