@@ -22,13 +22,13 @@ export default function LoginPage() {
     const newErrors: { email?: string; password?: string } = {};
     
     if (!email) {
-      newErrors.email = '请输入邮箱';
+      newErrors.email = '??????????';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = '请输入有效的邮箱地址';
+      newErrors.email = '????????Ч????????';
     }
     
     if (!password) {
-      newErrors.password = '请输入密码';
+      newErrors.password = '??????????';
     }
     
     setErrors(newErrors);
@@ -47,14 +47,14 @@ export default function LoginPage() {
       const res = await authApi.login({ email, password });
       if (res.success) {
         login(res.data.token, res.data.user);
-        toast.success('登录成功', { description: `欢迎回来，${res.data.user.username}` });
+        toast.success('??????', { description: `?????????${res.data.user.username}` });
         navigate('/');
       } else {
-        toast.error('登录失败', { description: res.message || '邮箱或密码错误' });
+        toast.error('??????', { description: res.message || '????????????' });
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('网络错误', { description: '请检查网络连接' });
+      toast.error('???????', { description: '????????????' });
     } finally {
       setLoading(false);
     }
@@ -71,13 +71,13 @@ export default function LoginPage() {
             </div>
             <span className="text-2xl font-bold text-[#0F172A]">&#23398;&#30740;&#31038;</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">登录账号</h1>
-          <p className="text-[#64748B] text-sm">登录后可下载资料、上传内容、使用AI助手</p>
+          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">??????</h1>
+          <p className="text-[#64748B] text-sm">??????????????????????????AI????</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-sm">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#1E293B] font-medium">邮箱</Label>
+              <Label htmlFor="email" className="text-[#1E293B] font-medium">????</Label>
               <Input
                 id="email"
                 type="email"
@@ -95,12 +95,12 @@ export default function LoginPage() {
               {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#1E293B] font-medium">密码</Label>
+              <Label htmlFor="password" className="text-[#1E293B] font-medium">????</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPwd ? 'text' : 'password'}
-                  placeholder="输入密码"
+                  placeholder="????????"
                   value={password}
                   onChange={e => {
                     setPassword(e.target.value);
@@ -118,16 +118,16 @@ export default function LoginPage() {
               {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
             </div>
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold rounded-xl">
-              {loading ? '登录中...' : '登录'}
+              {loading ? '?????...' : '???'}
             </Button>
           </form>
           <div className="mt-6 text-center text-sm text-[#64748B]">
-            还没有账号？{' '}
-            <Link to="/signup" className="text-[#6366F1] font-medium hover:underline">立即注册</Link>
+            ?????????{' '}
+            <Link to="/signup" className="text-[#6366F1] font-medium hover:underline">???????</Link>
           </div>
         </div>
         <p className="text-center text-xs text-[#64748B] mt-6">
-          登录即表示您同意《用户协议》及《隐私政策》
+          ????????????????Э?顷????????????
         </p>
       </div>
     </div>
