@@ -23,11 +23,11 @@ export default function SignupPage() {
 
   const getPasswordStrength = (pwd: string): { strength: 'weak' | 'medium' | 'strong'; message: string } => {
     if (pwd.length < 6) {
-      return { strength: 'weak', message: '密码强度：弱' };
+      return { strength: 'weak', message: '??????????' };
     } else if (pwd.length < 10 || !/[A-Z]/.test(pwd) || !/[0-9]/.test(pwd) || !/[^A-Za-z0-9]/.test(pwd)) {
-      return { strength: 'medium', message: '密码强度：中' };
+      return { strength: 'medium', message: '??????????' };
     } else {
-      return { strength: 'strong', message: '密码强度：强' };
+      return { strength: 'strong', message: '?????????' };
     }
   };
 
@@ -35,27 +35,27 @@ export default function SignupPage() {
     const newErrors: { username?: string; email?: string; password?: string; confirmPassword?: string } = {};
     
     if (!username) {
-      newErrors.username = '请输入昵称';
+      newErrors.username = '?????????';
     } else if (username.length < 2) {
-      newErrors.username = '昵称至少需要2个字符';
+      newErrors.username = '??????????2?????';
     }
     
     if (!email) {
-      newErrors.email = '请输入邮箱';
+      newErrors.email = '??????????';
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      newErrors.email = '请输入有效的邮箱地址';
+      newErrors.email = '????????Ч????????';
     }
     
     if (!password) {
-      newErrors.password = '请输入密码';
+      newErrors.password = '??????????';
     } else if (password.length < 6) {
-      newErrors.password = '密码至少需要6个字符';
+      newErrors.password = '???????????6?????';
     }
     
     if (!confirmPassword) {
-      newErrors.confirmPassword = '请确认密码';
+      newErrors.confirmPassword = '?????????';
     } else if (confirmPassword !== password) {
-      newErrors.confirmPassword = '两次输入的密码不一致';
+      newErrors.confirmPassword = '????????????????';
     }
     
     setErrors(newErrors);
@@ -74,14 +74,14 @@ export default function SignupPage() {
       const res = await authApi.signup({ username, email, password });
       if (res.success) {
         login(res.data.token, res.data.user);
-        toast.success('注册成功', { description: `欢迎加入学研社！已获得50积分奖励` });
+        toast.success('?????', { description: `???????????磡????50???????` });
         navigate('/');
       } else {
-        toast.error('注册失败', { description: res.message || '请检查输入信息' });
+        toast.error('??????', { description: res.message || '???????????' });
       }
     } catch (error) {
       console.error('Signup error:', error);
-      toast.error('网络错误', { description: '请检查网络连接' });
+      toast.error('???????', { description: '????????????' });
     } finally {
       setLoading(false);
     }
@@ -98,12 +98,12 @@ export default function SignupPage() {
             </div>
             <span className="text-2xl font-bold text-[#0F172A]">&#23398;&#30740;&#31038;</span>
           </div>
-          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">创建账号</h1>
-          <p className="text-[#64748B] text-sm">注册即获 50 积分奖励，开始你的学习之旅</p>
+          <h1 className="text-2xl font-bold text-[#1E293B] mb-2">???????</h1>
+          <p className="text-[#64748B] text-sm">????? 50 ????????????????????</p>
         </div>
         <div className="bg-white rounded-2xl border border-[#E2E8F0] p-8 shadow-sm">
           <div className="flex gap-3 mb-6 p-3 bg-emerald-50 rounded-xl">
-            {['注册奖励50积分', '每日签到奖励', '上传资料奖励'].map(t => (
+            {['?????50????', '??????????', '??????????'].map(t => (
               <div key={t} className="flex items-center gap-1 text-xs text-emerald-700">
                 <CheckCircle className="w-3 h-3" />
                 <span>{t}</span>
@@ -112,10 +112,10 @@ export default function SignupPage() {
           </div>
           <form onSubmit={handleSubmit} className="space-y-5">
             <div className="space-y-2">
-              <Label htmlFor="username" className="text-[#1E293B] font-medium">昵称</Label>
+              <Label htmlFor="username" className="text-[#1E293B] font-medium">???</Label>
               <Input
                 id="username"
-                placeholder="输入您的昵称"
+                placeholder="???????????"
                 value={username}
                 onChange={e => {
                   setUsername(e.target.value);
@@ -130,7 +130,7 @@ export default function SignupPage() {
               {errors.username && <p className="text-xs text-red-500 mt-1">{errors.username}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-[#1E293B] font-medium">邮箱</Label>
+              <Label htmlFor="email" className="text-[#1E293B] font-medium">????</Label>
               <Input
                 id="email"
                 type="email"
@@ -148,12 +148,12 @@ export default function SignupPage() {
               {errors.email && <p className="text-xs text-red-500 mt-1">{errors.email}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-[#1E293B] font-medium">密码</Label>
+              <Label htmlFor="password" className="text-[#1E293B] font-medium">????</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPwd ? 'text' : 'password'}
-                  placeholder="至少6个字符"
+                  placeholder="????6?????"
                   value={password}
                   onChange={e => {
                     setPassword(e.target.value);
@@ -180,12 +180,12 @@ export default function SignupPage() {
               {errors.password && <p className="text-xs text-red-500 mt-1">{errors.password}</p>}
             </div>
             <div className="space-y-2">
-              <Label htmlFor="confirmPassword" className="text-[#1E293B] font-medium">确认密码</Label>
+              <Label htmlFor="confirmPassword" className="text-[#1E293B] font-medium">???????</Label>
               <div className="relative">
                 <Input
                   id="confirmPassword"
                   type={showConfirmPwd ? 'text' : 'password'}
-                  placeholder="再次输入密码"
+                  placeholder="???????????"
                   value={confirmPassword}
                   onChange={e => {
                     setConfirmPassword(e.target.value);
@@ -206,30 +206,30 @@ export default function SignupPage() {
             <div className="flex items-center gap-2 text-sm text-[#64748B]">
               <input type="checkbox" id="terms" required className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500" />
               <label htmlFor="terms" className="flex items-center gap-1">
-                我同意
-                <Link to="/terms" className="text-[#6366F1] hover:underline">用户协议</Link>
-                和
-                <Link to="/privacy" className="text-[#6366F1] hover:underline">隐私政策</Link>
+                ?????
+                <Link to="/terms" className="text-[#6366F1] hover:underline">???Э??</Link>
+                ??
+                <Link to="/privacy" className="text-[#6366F1] hover:underline">???????</Link>
               </label>
             </div>
             <Button type="submit" disabled={loading} className="w-full h-11 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold rounded-xl">
-              {loading ? '注册中...' : '立即注册'}
+              {loading ? '?????...' : '???????'}
             </Button>
           </form>
           <div className="mt-6 text-center text-sm text-[#64748B]">
-            已有账号？{' '}
-            <Link to="/login" className="text-[#6366F1] font-medium hover:underline">登录</Link>
+            ????????{' '}
+            <Link to="/login" className="text-[#6366F1] font-medium hover:underline">???</Link>
           </div>
         </div>
         <div className="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200">
           <div className="flex items-center gap-2 mb-2">
             <Shield className="w-4 h-4 text-slate-600" />
-            <h3 className="text-sm font-semibold text-slate-700">账号安全提示</h3>
+            <h3 className="text-sm font-semibold text-slate-700">????????</h3>
           </div>
           <ul className="text-xs text-slate-600 space-y-1">
-            <li>? 请使用强度较高的密码，包含字母、数字和特殊字符</li>
-            <li>? 不要与其他网站使用相同的密码</li>
-            <li>? 定期更换密码，保持账号安全</li>
+            <li>? ????????????????????????????????????</li>
+            <li>? ????????????????????????</li>
+            <li>? ????????????????????</li>
           </ul>
         </div>
       </div>
