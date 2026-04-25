@@ -33,7 +33,7 @@ export default function Index() {
   const [selectedResourceId, setSelectedResourceId] = useState<string | null>(null);
   const [resourceFilter, setResourceFilter] = useState<{ category?: string; stage?: string }>({});
 
-  // 处理 URL 变化，更新视图
+  // ???? URL ?仯?????????
   useEffect(() => {
     const path = location.pathname;
     if (path === '/home') {

@@ -321,3 +321,4 @@ function ResourceCard({ resource, onClick }: { resource: Resource; onClick: () =
     </button>
   );
 }
+
