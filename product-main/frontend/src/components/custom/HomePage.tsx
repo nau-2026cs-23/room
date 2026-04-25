@@ -59,7 +59,7 @@ export default function HomePage({ onGoToResources, onGoToResource, onGoToAI }: 
             </Badge>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
               找到你需要的<br />
-              <span className="text-[#10B981]">&#20808;&#36827;&#23398;&#20064;&#36164;&#26009;</span>
+              <span className="text-[#10B981]">高效学习资料</span>
             </h1>
             <p className="text-lg text-slate-300 mb-8 leading-relaxed max-w-2xl">
               覆盖本科、研究生、考研、考公全学段资料，配合AI智能问答助手，让学习更高效。
@@ -89,20 +89,22 @@ export default function HomePage({ onGoToResources, onGoToResource, onGoToAI }: 
         <div className="relative border-t border-white/10">
           <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              {[
-                { label: '资料总量', value: '10,000+', icon: FileText },
-                { label: '注册用户', value: '50,000+', icon: Users },
-                { label: '日均下载', value: '1,000+', icon: Download },
-                { label: '认证教师', value: '200+', icon: GraduationCap },
-              ].map(stat => (
-                <div key={stat.label} className="flex items-center gap-3">
-                  <stat.icon className="w-5 h-5 text-[#10B981]" />
-                  <div>
-                    <div className="text-xl font-bold text-white">{stat.value}</div>
-                    <div className="text-xs text-slate-400">{stat.label}</div>
+              {
+                [
+                  { label: '资料总量', value: '10,000+', icon: FileText },
+                  { label: '注册用户', value: '50,000+', icon: Users },
+                  { label: '日均下载', value: '1,000+', icon: Download },
+                  { label: '认证教师', value: '200+', icon: GraduationCap },
+                ].map(stat => (
+                  <div key={stat.label} className="flex items-center gap-3">
+                    <stat.icon className="w-5 h-5 text-[#10B981]" />
+                    <div>
+                      <div className="text-xl font-bold text-white">{stat.value}</div>
+                      <div className="text-xs text-slate-400">{stat.label}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              }
             </div>
           </div>
         </div>
@@ -203,22 +205,24 @@ export default function HomePage({ onGoToResources, onGoToResource, onGoToAI }: 
             </div>
             <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
               <div className="space-y-3">
-                {[
-                  { q: '高等数学极限怎么学？', a: '建议先掌握极限定义，再学习极限运算法则...' },
-                  { q: '考研408备考路线是什么？', a: '建议按数据结构→算法→操作系统→计算机网络顺序...' },
-                  { q: '行测言语理解有哪些解题技巧？', a: '主要包括主旨归纳法、关键词定位法、逻辑分析法...' },
-                ].map((item, i) => (
-                  <div key={i} className="space-y-1">
-                    <div className="flex items-start gap-2">
-                      <span className="text-[#6366F1] text-xs font-bold mt-0.5">Q</span>
-                      <span className="text-sm text-white">{item.q}</span>
+                {
+                  [
+                    { q: '高等数学极限怎么学？', a: '建议先掌握极限定义，再学习极限运算法则...' },
+                    { q: '考研408备考路线是什么？', a: '建议按数据结构→算法→操作系统→计算机网络顺序...' },
+                    { q: '行测言语理解有哪些解题技巧？', a: '主要包括主旨归纳法、关键词定位法、逻辑分析法...' },
+                  ].map((item, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="flex items-start gap-2">
+                        <span className="text-[#6366F1] text-xs font-bold mt-0.5">Q</span>
+                        <span className="text-sm text-white">{item.q}</span>
+                      </div>
+                      <div className="flex items-start gap-2 pl-4">
+                        <span className="text-[#10B981] text-xs font-bold mt-0.5">A</span>
+                        <span className="text-xs text-slate-400">{item.a}</span>
+                      </div>
                     </div>
-                    <div className="flex items-start gap-2 pl-4">
-                      <span className="text-[#10B981] text-xs font-bold mt-0.5">A</span>
-                      <span className="text-xs text-slate-400">{item.a}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))
+                }
               </div>
             </div>
           </div>
@@ -233,18 +237,20 @@ export default function HomePage({ onGoToResources, onGoToResource, onGoToAI }: 
             <p className="text-[#64748B]">通过签到、上传、评论等行为获得积分，兑换优质资料</p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { action: '注册奖励', points: '+50', icon: '?' },
-              { action: '每日签到', points: '+5', icon: '?' },
-              { action: '上传资料', points: '+30', icon: '?' },
-              { action: '资料被下载', points: '+2', icon: '??' },
-            ].map(item => (
-              <div key={item.action} className="bg-white rounded-2xl p-4 text-center border border-amber-100">
-                <div className="text-2xl mb-2">{item.icon}</div>
-                <div className="text-xl font-bold text-amber-600">{item.points}</div>
-                <div className="text-sm text-[#64748B]">{item.action}</div>
-              </div>
-            ))}
+            {
+              [
+                { action: '注册奖励', points: '+50', icon: '?' },
+                { action: '每日签到', points: '+5', icon: '?' },
+                { action: '上传资料', points: '+30', icon: '?' },
+                { action: '资料被下载', points: '+2', icon: '??' },
+              ].map(item => (
+                <div key={item.action} className="bg-white rounded-2xl p-4 text-center border border-amber-100">
+                  <div className="text-2xl mb-2">{item.icon}</div>
+                  <div className="text-xl font-bold text-amber-600">{item.points}</div>
+                  <div className="text-sm text-[#64748B]">{item.action}</div>
+                </div>
+              ))
+            }
           </div>
         </div>
       </section>
@@ -256,7 +262,7 @@ export default function HomePage({ onGoToResources, onGoToResource, onGoToAI }: 
             <div className="w-6 h-6 bg-[#0F172A] rounded-md flex items-center justify-center">
               <BookOpen className="w-3 h-3 text-white" />
             </div>
-            <span className="font-bold text-[#0F172A]">&#23398;&#30740;&#31038;</span>
+            <span className="font-bold text-[#0F172A]">学研社</span>
           </div>
           <p className="text-xs text-[#64748B]">? 2026 学研社. 助力每一位学子高效上岸。</p>
           <p className="text-xs text-[#64748B] mt-1">平台资料仅供个人学习使用，严禁二次传播</p>
